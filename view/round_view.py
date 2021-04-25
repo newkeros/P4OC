@@ -11,6 +11,6 @@ def print_match_result(match):
 def print_final_round_score(matchs, number):
     os.system("clear")
     print(f"FINAL SCORES ROUND {number}: ")
-    for match in matchs
+    for match in matchs:
         print(f"{match.player1.name} : {match.player1.score}")
         print(f"{match.player2.name} : {match.player2.score}")
