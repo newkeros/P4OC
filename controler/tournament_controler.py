@@ -4,6 +4,7 @@ from model.round import Round
 from view.tournament_view import get_tournament_name, get_tournament_time_control
 from view.match import enter_score
 from view.player import print_player
+from view.round_view import print_match_result
 
 
 players = [Player("Ranga", 1), Player("Grégory", 2)]
@@ -11,9 +12,10 @@ players = [Player("Ranga", 1), Player("Grégory", 2)]
 
 class TournamentControler:
     def __init__(self):
-        name = self.check_name()
+        name = self.check_tournament_name()
         time_control = self.check_tournament_time_control()
         self.tournament = Tournament(name, time_control)
+        # self.tournament = Tournament("test", "bullet") #BYPASS TOURNAMENT
 
         """for i in range(2):
             name, elo = get_player_info()
@@ -49,8 +51,27 @@ class TournamentControler:
             round1.add_match(self.tournament.player[i], self.tournament.player[4 + i])
 
         for match in self.tournament.round[0].matchs:
-            enter_score()
+            match.score_player1, match.score_player2 = self.handle_score()
+            print_match_result(match)
 
-    def first_round_results(self):
-        for match in self.tournament.round[0].matchs:
-            """entrer score pour le premier match. """
+
+    def run_round(self, number):
+        round = Round(str(number))
+        self.tournament.add_round(round)
+        pass
+
+    def handle_score(self):
+        score = enter_score()
+        while score != "1" and score != "2" and score != "3"
+            score = enter_score()
+
+        if score == "1":
+            return 1, 0
+        elif score == "2":
+            return 0, 1
+        elif score == "3":
+            return 0.5, 0.5
+
+    def update_player_score(self, match):
+        ma
+
