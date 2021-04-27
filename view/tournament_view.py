@@ -1,7 +1,25 @@
+import datetime
+
 def get_tournament_name():
     name = input("Enter the tournament name : ")
     return name
 
+
 def get_tournament_time_control():
-    time_control = input("Enter time control (Bullet/Blitz/Coup rapide : ")
+    time_control = input("Enter time control (Bullet/Blitz/Coup rapide) : ")
     return time_control
+
+
+def get_tournament_place():
+    pass
+
+
+def get_tournament_date():
+    date_data = input("Entrez la date dans le format AAAA-MM-JJ : ")
+    year, month, day = map(int, date_data.split('-'))
+    tournament_date = datetime.date(year, month, day)
+    return tournament_date
+
+def get_tournament_description():
+    pass
+

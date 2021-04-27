@@ -10,4 +10,4 @@ class Match:
 
 
 # Victoire 1 points 0 pour l'autre
-# Match nul 0.5 pour les deux
+# Match nul 0.5 pour les deuxtest

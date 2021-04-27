@@ -2,7 +2,7 @@ import os
 
 
 def enter_score():
-    score = input("Entrez le score (1 : victoire du joueur 1 / 2 : victoire du joueur 2 / 3 : égalité")
+    score = input("Entrez le score (1 : victoire du joueur 1 / 2 : victoire du joueur 2 / 3 : égalité) : ")
     return score
 
 def print_match_result(match):
