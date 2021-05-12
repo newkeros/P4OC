@@ -1,5 +1,5 @@
 class Tournament:
-    def __init__(self, name, time_control, date):
+    def __init__(self, name, time_control, date, place, description):
         self.name = name
         self.time_control = time_control
         self.players = []

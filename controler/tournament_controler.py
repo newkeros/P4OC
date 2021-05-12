@@ -1,12 +1,14 @@
 from model.tournament_model import Tournament
 from model.player import Player
 from model.round import Round
-from view.tournament_view import get_tournament_name, get_tournament_time_control, get_tournament_date
+from view.tournament_view import get_tournament_name, get_tournament_time_control, get_tournament_date, \
+    get_tournament_place, get_tournament_description
 from view.player_view import print_player, get_player_info
 from view.round_view import print_match_result, enter_score, print_final_round_score
 
 
-players = [Player("Ranga", 34), Player("Grégory", 12), Player("Jean-Marie", 3), Player("toto", 100)]
+players = [Player("Ranga", 34), Player("Grégory", 12), Player("Jean-Marie", 3), Player("toto", 100), Player("bob", 234),
+           Player("Kasparov", 2830), Player("guy", 345), Player("jack", 32)]
 
 
 class TournamentControler:
@@ -14,7 +16,9 @@ class TournamentControler:
         name = self.check_tournament_name()
         time_control = self.check_tournament_time_control()
         tournament_date = get_tournament_date()
-        self.tournament = Tournament(name, time_control, tournament_date)
+        tournament_place = get_tournament_place()
+        tournament_description = get_tournament_description()
+        self.tournament = Tournament(name, time_control, tournament_date, tournament_place, tournament_description)
         # self.tournament = Tournament("test", "bullet") #BYPASS TOURNAMENT
 
         """for i in range(4):
@@ -43,10 +47,15 @@ class TournamentControler:
 
     def check_tournament_date(self):
         tournament_date = get_tournament_date()
-        while not tournament_date.isalpha():
+        while tournament_date.isalpha():
             print("Erreur de saisie: la date ne peut contenir que des chiffres")
             tournament_date = get_tournament_date()
         return tournament_date
+
+    def check_tournament_place(self):
+        tournament_place = get_tournament_place()
+        while not tournament_place.isalpha():
+            print("Erreur de saisie, le lieu du tournoi ne peut contenir que des lettres")
 
 
     def run_first_round(self):
@@ -54,14 +63,18 @@ class TournamentControler:
         self.tournament.players.sort(key=lambda x: x.elo)
         round1 = Round("1")
         self.tournament.add_round(round1)
-        for i in range(2):
-            round1.add_match(self.tournament.players[i], self.tournament.players[2 + i])
+        for i in range(4):
+            round1.add_match(self.tournament.players[i], self.tournament.players[4 + i])
 
         for match in self.tournament.rounds[0].matchs:
             match.score_player1, match.score_player2 = self.handle_score()
             print_match_result(match)
             self.update_player_score(match)
         print_final_round_score(self.tournament.rounds[0].matchs, round1.number)
+
+
+    def next_round(self):
+        pass
 
 
     def run_round(self, number):
@@ -84,4 +97,10 @@ class TournamentControler:
     def update_player_score(self, match):
         match.player1.score += match.score_player1
         match.player2.score += match.score_player2
+        match.player3.score += match.score_player3
+        match.player4.score += match.score_player4
+        match.player5.score += match.score_player5
+        match.player6.score += match.score_player6
+        match.player7.score += match.score_player7
+        match.player8.score += match.score_player8
 

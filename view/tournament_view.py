@@ -11,7 +11,8 @@ def get_tournament_time_control():
 
 
 def get_tournament_place():
-    pass
+    tournament_place = input("Enter the tournament place : ")
+    return tournament_place
 
 
 def get_tournament_date():
@@ -19,7 +20,9 @@ def get_tournament_date():
     year, month, day = map(int, date_data.split('-'))
     tournament_date = datetime.date(year, month, day)
     return tournament_date
+    #proposer input de date à date ?
 
 def get_tournament_description():
-    pass
+    description = input("Entrez une description du tournoi: ")
+    return description
 
