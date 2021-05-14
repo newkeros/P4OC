@@ -3,32 +3,37 @@ from model.player import Player
 from model.round import Round
 from view.tournament_view import get_tournament_name, get_tournament_time_control, get_tournament_date, \
     get_tournament_place, get_tournament_description
-from view.player_view import print_player, get_player_info
+from view.player_view import print_player
 from view.round_view import print_match_result, enter_score, print_final_round_score
 
 
-players = [Player("Ranga", 34), Player("Grégory", 12), Player("Jean-Marie", 3), Player("toto", 100), Player("bob", 234),
-           Player("Kasparov", 2830), Player("guy", 345), Player("jack", 32)]
+players = [Player("Ranga", "Gonnage", 34, "04-03-1989", "Homme"), Player("Grégory", "Albert", 12, "04-03-1989", "Homme"),
+           Player("Jean-Marie", "x", 3, "04-03-1989", "Homme"), Player("toto", "toto", 100, "04-03-1989", "Homme"),
+           Player("bob", "test", 234, "04-03-1989", "Homme"),
+           Player("Igor", "Kasparov", 2830, "04-03-1989", "Homme"),
+           Player("guy", "montagné", 345, "04-03-1989", "Homme"),
+           Player("jack", "black", 32, "04-03-1989", "Homme")]
 
 
 class TournamentControler:
     def __init__(self):
         name = self.check_tournament_name()
         time_control = self.check_tournament_time_control()
-        tournament_date = get_tournament_date()
-        tournament_place = get_tournament_place()
-        tournament_description = get_tournament_description()
+        tournament_date = self.check_tournament_date()
+        tournament_place = self.check_tournament_place()
+        tournament_description = self.check_tournament_description()
         self.tournament = Tournament(name, time_control, tournament_date, tournament_place, tournament_description)
         # self.tournament = Tournament("test", "bullet") #BYPASS TOURNAMENT
 
-        """for i in range(4):
+        """for i in range(8):
             name, elo = get_player_info()
             player = Player(name, elo)
             self.tournament.add_player(player)"""
         self.tournament.players = players
 
     def print_player(self):
-        print_player(self.tournament.players)
+        """print_player(self.tournament.players)"""
+        print_player(players)
 
     def check_tournament_name(self):
         tournament_name = get_tournament_name()
@@ -56,6 +61,16 @@ class TournamentControler:
         tournament_place = get_tournament_place()
         while not tournament_place.isalpha():
             print("Erreur de saisie, le lieu du tournoi ne peut contenir que des lettres")
+            tournament_place = get_tournament_place()
+        return tournament_place
+
+    def check_tournament_description(self):
+        tournament_description = get_tournament_description()
+        """while not tournament_description.isalpha():
+            print("Erreur de saisie, la description du tournoi ne peut contenir que des lettres")
+            get_tournament_description()"""
+        return tournament_description
+
 
 
     def run_first_round(self):

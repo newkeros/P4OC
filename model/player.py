@@ -1,15 +1,28 @@
 class Player:
-    def __init__(self, name, elo):
-        self.name = name
+    def __init__(self, first_name, last_name, elo, date_of_birth, player_gender):
+        self.first_name = first_name
+        self.last_name = last_name
         self.elo = elo
+        self.date_of_birth = date_of_birth
+        self.player_gender = player_gender
         self.score = 0
         self.opponent = []
 
-        def __str__(self):
-            return self.name
 
-        def add_opponent(self, elo):
-            self.opponent.append(elo)
+        def first_name(self):
+            return self.first_name
+
+        def last_name(self):
+            return self.last_name
 
         def get_elo(self):
             return self.elo
+
+        def date_of_birth(self):
+            return self.date_of_birth
+
+        def player_gender(self):
+            return self.player_gender
+
+        def add_opponent(self, elo):
+            self.opponent.append(elo)

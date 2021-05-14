@@ -1,4 +1,5 @@
 import datetime
+from utils import is_date_valid
 
 def get_tournament_name():
     name = input("Enter the tournament name : ")
@@ -16,9 +17,7 @@ def get_tournament_place():
 
 
 def get_tournament_date():
-    date_data = input("Entrez la date dans le format AAAA-MM-JJ : ")
-    year, month, day = map(int, date_data.split('-'))
-    tournament_date = datetime.date(year, month, day)
+    tournament_date = input("Entrez la date du tournoi : ")
     return tournament_date
     #proposer input de date à date ?
 
