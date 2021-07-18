@@ -9,20 +9,31 @@ class Player:
         self.opponent = []
 
 
-        def first_name(self):
-            return self.first_name
+    def first_name(self):
+        return self.first_name
 
-        def last_name(self):
-            return self.last_name
+    def last_name(self):
+        return self.last_name
 
-        def get_elo(self):
-            return self.elo
+    def get_elo(self):
+        return self.elo
 
-        def date_of_birth(self):
-            return self.date_of_birth
+    def date_of_birth(self):
+        return self.date_of_birth
 
-        def player_gender(self):
-            return self.player_gender
+    def player_gender(self):
+        return self.player_gender
 
-        def add_opponent(self, elo):
-            self.opponent.append(elo)
+    def add_opponent(self, elo):
+        self.opponent.append(elo)
+
+    def serializer(self):
+        data = {"first name": self.first_name, "last name": self.last_name, "elo": self.elo,
+                "date of birth": self.date_of_birth, "player's gender": self.player_gender,
+                "score": self.score, "opponent list": self.opponent}
+        return data
+
+    def player_serializer(self):
+        data = {"first name": self.first_name, "last name": self.last_name, "elo": self.elo,
+                "date of birth": self.date_of_birth, "player's gender": self.player_gender}
+        return data

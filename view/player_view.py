@@ -21,6 +21,7 @@ def get_player_gender():
 
 def print_player(players):
     for player in players:
+        print("--------------------")
         print(f"first name : {player.first_name}")
         print(f"last name : {player.last_name}")
         print(f"elo : {player.elo}")

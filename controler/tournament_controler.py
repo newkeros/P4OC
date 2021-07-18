@@ -5,6 +5,9 @@ from view.tournament_view import get_tournament_name, get_tournament_time_contro
     get_tournament_place, get_tournament_description
 from view.player_view import print_player
 from view.round_view import print_match_result, enter_score, print_final_round_score
+from utils import is_date_valid
+from tinydb import TinyDB
+from model.match import Match
 
 
 players = [Player("Ranga", "Gonnage", 34, "04-03-1989", "Homme"), Player("Grégory", "Albert", 12, "04-03-1989", "Homme"),
@@ -30,6 +33,7 @@ class TournamentControler:
             player = Player(name, elo)
             self.tournament.add_player(player)"""
         self.tournament.players = players
+        self.json = self.tournament.serializer()
 
     def print_player(self):
         """print_player(self.tournament.players)"""
@@ -51,11 +55,11 @@ class TournamentControler:
         return time_control
 
     def check_tournament_date(self):
-        tournament_date = get_tournament_date()
-        while tournament_date.isalpha():
-            print("Erreur de saisie: la date ne peut contenir que des chiffres")
-            tournament_date = get_tournament_date()
-        return tournament_date
+        date = get_tournament_date()
+        while not is_date_valid(date):
+            print("La date n'a pas le bon format dd-mm-YYYY")
+            date = get_tournament_date()
+        return date
 
     def check_tournament_place(self):
         tournament_place = get_tournament_place()
@@ -75,27 +79,18 @@ class TournamentControler:
 
     def run_first_round(self):
         # algorithme pour créer les premier round
-        self.tournament.players.sort(key=lambda x: x.elo)
-        round1 = Round("1")
-        self.tournament.add_round(round1)
+        self.tournament.players.sort(key=lambda x: x.elo) #trier les joueurs par elo
+        round1 = Round("1") #nom du first round
+        self.tournament.add_round(round1) #ajoute le round à la liste
         for i in range(4):
-            round1.add_match(self.tournament.players[i], self.tournament.players[4 + i])
+            round1.add_match(self.tournament.players[i], self.tournament.players[4 + i]) #1er du haut du tableau contre 5ème
 
-        for match in self.tournament.rounds[0].matchs:
+        for match in self.tournament.rounds[0].matchs: #matching de joueurs
             match.score_player1, match.score_player2 = self.handle_score()
             print_match_result(match)
             self.update_player_score(match)
         print_final_round_score(self.tournament.rounds[0].matchs, round1.number)
 
-
-    def next_round(self):
-        pass
-
-
-    def run_round(self, number):
-        round = Round(str(number))
-        self.tournament.add_round(round)
-        pass
 
     def handle_score(self):
         score = enter_score()
@@ -112,10 +107,87 @@ class TournamentControler:
     def update_player_score(self, match):
         match.player1.score += match.score_player1
         match.player2.score += match.score_player2
-        match.player3.score += match.score_player3
-        match.player4.score += match.score_player4
-        match.player5.score += match.score_player5
-        match.player6.score += match.score_player6
-        match.player7.score += match.score_player7
-        match.player8.score += match.score_player8
 
+
+
+    def get_player(self):
+        players = list()
+
+        for player in self.tournament.players:
+            players.append(player)
+
+        players.sort(key=lambda x: x.elo, reverse=True)
+        players.sort(key=lambda x: x.score, reverse=True)
+
+        return players
+
+
+    def run_round(self, round_number):
+        round = Round(str(round_number))
+        self.tournament.add_round(round)
+        players = self.get_player()
+
+
+        i = 0
+
+        while len(players) > 0:
+            player1 = players[i]
+            player2 = players[i + 1]
+
+            while player2.elo in player1.opponent:
+                try:
+                    i += 1
+                    player2 = players[i + 1]
+                except IndexError:
+                    player2 = players[1]
+                    i = 0
+                    break
+
+            round.add_match(player1, player2)
+            del players[0]
+            del players[i]
+
+            i = 0
+
+        for match in self.tournament.rounds[round_number - 1].matchs:
+            match.score_player1, match.score_player2 = self.handle_score()
+            print_match_result(match)
+            self.update_player_score(match)
+        print_final_round_score(self.tournament.rounds[round_number - 1].matchs, round.number)
+
+
+    def tournament_db(self):
+        db = TinyDB("db_tournament.json", indent=4)
+        tournament_serializer = self.tournament.serializer()
+        db.insert(tournament_serializer)
+
+    def reload_tournament(self):
+        self.tournament = None
+        self.deserializer()
+
+    def deserializer(self):
+        self.tournament = Tournament(self.json["name"], self.json["time control"],
+                                     self.json["rounds"])
+
+        for player in self.json["players"]:
+            reload_player = Player(player["first name"], player["last name"], player["elo"],
+                                   player["date of birth"], player["player's gender"], player["score"],
+                                   player["opponent list"])
+            self.tournament.add_player(reload_player)
+
+        for round in self.json["rounds"]:
+            reload_round = Round(round["number"])
+            for match in self.json["matchs"]:
+                player1 = Player(match["player1"]["first name"], match["player1"]["last name"],
+                                 match["player1"]["elo"], match["player1"]["date of birth"],
+                                 match["player1"]["player's gender"],
+                                 match["player1"]["score"],
+                                 match["player1"]["opponent list"])
+                player2 = (match["player2"]["first name"], match["player2"]["last name"],
+                                 match["player2"]["elo"], match["player2"]["date of birth"],
+                                 match["player2"]["player's gender"],
+                                 match["player2"]["score"],
+                                 match["player2"]["opponent list"])
+                reload_match = Match(player1, player2, match["score player 1"], match["score player 2"])
+                reload_round.add_reload_match(reload_match)
+            self.tournament.add_round(reload_round)

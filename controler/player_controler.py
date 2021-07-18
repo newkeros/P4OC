@@ -3,7 +3,7 @@ from view.player_view import get_date_of_birth, get_player_first_name, get_playe
 
 
 def get_and_check_date():
-    date = get_date_of_birth
+    date = get_date_of_birth()
     while not is_date_valid(date):
         print("La date n'a pas le bon format dd-mm-YYYY")
         date = get_date_of_birth()
