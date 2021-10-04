@@ -1,12 +1,12 @@
 class Player:
-    def __init__(self, first_name, last_name, elo, date_of_birth, player_gender):
+    def __init__(self, first_name, last_name, elo, date_of_birth, player_gender, score=0, opponent=[]):
         self.first_name = first_name
         self.last_name = last_name
         self.elo = elo
         self.date_of_birth = date_of_birth
         self.player_gender = player_gender
-        self.score = 0
-        self.opponent = []
+        self.score = score
+        self.opponent = opponent
 
 
     def first_name(self):
@@ -37,3 +37,11 @@ class Player:
         data = {"first name": self.first_name, "last name": self.last_name, "elo": self.elo,
                 "date of birth": self.date_of_birth, "player's gender": self.player_gender}
         return data
+
+"""créer table  like  def save(serialized_tournament):
+        db = TinyDB("db_tournament.json", indent=4)
+        tournaments = db.table("Tournaments")
+        tournaments.insert(serialized_tournament)"""
+
+def save_player():
+    """appeler serializer du dessus sans le score et les opponents"""

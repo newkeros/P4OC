@@ -28,3 +28,4 @@ def print_player(players):
         print(f"date of birth : {player.date_of_birth}")
         print(f"player gender : {player.player_gender}")
         print("--------------------")
+

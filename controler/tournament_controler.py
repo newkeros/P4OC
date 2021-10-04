@@ -2,12 +2,13 @@ from model.tournament_model import Tournament
 from model.player import Player
 from model.round import Round
 from view.tournament_view import get_tournament_name, get_tournament_time_control, get_tournament_date, \
-    get_tournament_place, get_tournament_description
+    get_tournament_place, get_tournament_description, which_tournament_to_choose, print_home_menu, \
+    print_players_reports_menu, user_input_menu
 from view.player_view import print_player
 from view.round_view import print_match_result, enter_score, print_final_round_score
 from utils import is_date_valid
-from tinydb import TinyDB
 from model.match import Match
+from tinydb import Query
 
 
 players = [Player("Ranga", "Gonnage", 34, "04-03-1989", "Homme"), Player("Grégory", "Albert", 12, "04-03-1989", "Homme"),
@@ -20,6 +21,9 @@ players = [Player("Ranga", "Gonnage", 34, "04-03-1989", "Homme"), Player("Grégo
 
 class TournamentControler:
     def __init__(self):
+        self.tournament = None
+
+    def new_tournament(self):
         name = self.check_tournament_name()
         time_control = self.check_tournament_time_control()
         tournament_date = self.check_tournament_date()
@@ -31,9 +35,10 @@ class TournamentControler:
         """for i in range(8):
             name, elo = get_player_info()
             player = Player(name, elo)
-            self.tournament.add_player(player)"""
+            self.tournament.add_player(player)
+            player.save player à creer"""
         self.tournament.players = players
-        self.json = self.tournament.serializer()
+        Tournament.save(self.tournament.serializer())
 
     def print_player(self):
         """print_player(self.tournament.players)"""
@@ -156,38 +161,63 @@ class TournamentControler:
         print_final_round_score(self.tournament.rounds[round_number - 1].matchs, round.number)
 
 
-    def tournament_db(self):
-        db = TinyDB("db_tournament.json", indent=4)
-        tournament_serializer = self.tournament.serializer()
-        db.insert(tournament_serializer)
+    def reload_tournament(self, tournament_name):
+        self.tournament = Tournament.deserializer(tournament_name)
+        rounds_to_run = 4 - (len(self.tournament.rounds))
 
-    def reload_tournament(self):
-        self.tournament = None
-        self.deserializer()
+        if rounds_to_run == 4:
+            self.run_first_round()
+            for i in range(2, 5):
+                self.run_round(i)
+        else:
+            for i in range(rounds_to_run):
+                self.run_round(5-rounds_to_run+i)
 
-    def deserializer(self):
-        self.tournament = Tournament(self.json["name"], self.json["time control"],
-                                     self.json["rounds"])
+    def search_tournament(self):
+        names = Tournament.get_ongoing_tournaments()
+        return(names)
 
-        for player in self.json["players"]:
-            reload_player = Player(player["first name"], player["last name"], player["elo"],
-                                   player["date of birth"], player["player's gender"], player["score"],
-                                   player["opponent list"])
-            self.tournament.add_player(reload_player)
+    def choose_tournament(self):
+        tournament_choice = which_tournament_to_choose()
+        if tournament_choice == 1:
+            return
+        elif tournament_choice == 2:
+            return
+        elif tournament_choice == 3:
+            return
 
-        for round in self.json["rounds"]:
-            reload_round = Round(round["number"])
-            for match in self.json["matchs"]:
-                player1 = Player(match["player1"]["first name"], match["player1"]["last name"],
-                                 match["player1"]["elo"], match["player1"]["date of birth"],
-                                 match["player1"]["player's gender"],
-                                 match["player1"]["score"],
-                                 match["player1"]["opponent list"])
-                player2 = (match["player2"]["first name"], match["player2"]["last name"],
-                                 match["player2"]["elo"], match["player2"]["date of birth"],
-                                 match["player2"]["player's gender"],
-                                 match["player2"]["score"],
-                                 match["player2"]["opponent list"])
-                reload_match = Match(player1, player2, match["score player 1"], match["score player 2"])
-                reload_round.add_reload_match(reload_match)
-            self.tournament.add_round(reload_round)
+    def menu_home(self):
+        is_app_run = True
+        while is_app_run:
+            print_home_menu()
+            answer = user_input_menu()
+            if answer == "1":
+                self.new_tournament()
+                self.run_first_round()
+                for i in range(2, 5):
+                    self.run_round(i)
+            elif answer == "2":
+                names = Tournament.get_ongoing_tournaments()
+                for i in range(len(names)):
+                    print(f"{i} - {names[i]}")
+                choose_tournament = which_tournament_to_choose()
+                while True:
+                    try:
+                        tournament_number = int(choose_tournament)
+                        if tournament_number >= 0 and tournament_number < len(names):
+                            self.reload_tournament(names[tournament_number])
+                        else:
+                            choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
+                    except ValueError:
+                        choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
+                print(names[tournament_number])
+            elif answer == "3":
+                print_players_reports_menu()
+            elif answer == "4":
+                is_app_run = False
+            else:
+                print("error input")
+
+
+
+
