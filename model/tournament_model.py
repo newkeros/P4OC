@@ -36,15 +36,22 @@ class Tournament:
         tournaments = db.table("Tournaments")
         tournaments.insert(serialized_tournament)
 
+    @staticmethod
+    def update(serialized_tournament, name):
+        db = TinyDB("db_tournament.json", indent=4)
+        tournaments = db.table("Tournaments")
+        tournament = Query()
+        tournaments.update(serialized_tournament, tournament.name == name)
+
 
 
     @staticmethod
     def deserializer(name):
         db = TinyDB("db_tournament.json", indent=4)
-        tournaments = Query()
-        print("Trace1", name)
+        tournaments = db.table("Tournaments")
+        tournament = Query()
 
-        tournament = db.search(tournaments.name == name)[0]
+        tournament = tournaments.search(tournaments.name == name)[0]
         reload_tournament = Tournament(tournament["name"], tournament["time control"],
                                        tournament["place"], tournament["date"],
                                        tournament["description"])

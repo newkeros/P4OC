@@ -167,11 +167,20 @@ class TournamentControler:
 
         if rounds_to_run == 4:
             self.run_first_round()
+            if(self.is_stop()):
+                Tournament.update(self.tournament.serializer(), tournament_name)
+                return
             for i in range(2, 5):
                 self.run_round(i)
+                if (self.is_stop()):
+                    Tournament.update(self.tournament.serializer(), tournament_name)
+                    break
         else:
             for i in range(rounds_to_run):
                 self.run_round(5-rounds_to_run+i)
+                if (self.is_stop()):
+                    Tournament.update(self.tournament.serializer(), tournament_name)
+                    break
 
     def search_tournament(self):
         names = Tournament.get_ongoing_tournaments()
@@ -194,8 +203,14 @@ class TournamentControler:
             if answer == "1":
                 self.new_tournament()
                 self.run_first_round()
+                if (self.is_stop()):
+                    Tournament.update(self.tournament.serializer(), self.tournament.name)
+                    continue
                 for i in range(2, 5):
                     self.run_round(i)
+                    if (self.is_stop()):
+                        Tournament.update(self.tournament.serializer())
+                        continue
             elif answer == "2":
                 names = Tournament.get_ongoing_tournaments()
                 for i in range(len(names)):
@@ -217,6 +232,9 @@ class TournamentControler:
                 is_app_run = False
             else:
                 print("error input")
+
+    def is_stop(self):
+        pass
 
 
 
