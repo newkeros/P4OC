@@ -1,4 +1,4 @@
-import TinyDB
+from tinydb import TinyDB, Query
 
 class Player:
     def __init__(self, first_name, last_name, elo, date_of_birth, player_gender, score=0, opponent=[]):

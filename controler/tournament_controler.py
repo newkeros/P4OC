@@ -3,20 +3,22 @@ from model.player import Player
 from model.round import Round
 from view.tournament_view import get_tournament_name, get_tournament_time_control, get_tournament_date, \
     get_tournament_place, get_tournament_description, which_tournament_to_choose, print_home_menu, \
-    print_players_reports_menu, user_input_menu
-from view.player_view import print_player
+    print_players_reports_menu, user_input_menu, continue_tournament, \
+    tournament_selection_for_player_reports, print_all_players
+from view.player_view import print_player, get_player_first_name, get_player_last_name, get_player_elo, \
+    get_date_of_birth, get_player_gender
 from view.round_view import print_match_result, enter_score, print_final_round_score
 from utils import is_date_valid
 from model.match import Match
 from tinydb import Query
 
 
-players = [Player("Ranga", "Gonnage", 34, "04-03-1989", "Homme"), Player("Grégory", "Albert", 12, "04-03-1989", "Homme"),
+"""players = [Player("Ranga", "Gonnage", 34, "04-03-1989", "Homme"), Player("Grégory", "Albert", 12, "04-03-1989", "Homme"),
            Player("Jean-Marie", "x", 3, "04-03-1989", "Homme"), Player("toto", "toto", 100, "04-03-1989", "Homme"),
            Player("bob", "test", 234, "04-03-1989", "Homme"),
            Player("Igor", "Kasparov", 2830, "04-03-1989", "Homme"),
            Player("guy", "montagné", 345, "04-03-1989", "Homme"),
-           Player("jack", "black", 32, "04-03-1989", "Homme")]
+           Player("jack", "black", 32, "04-03-1989", "Homme")]"""
 
 
 class TournamentControler:
@@ -30,15 +32,20 @@ class TournamentControler:
         tournament_place = self.check_tournament_place()
         tournament_description = self.check_tournament_description()
         self.tournament = Tournament(name, time_control, tournament_date, tournament_place, tournament_description)
-        # self.tournament = Tournament("test", "bullet") #BYPASS TOURNAMENT
 
-        """for i in range(8):
-            name, elo = get_player_info()
-            player = Player(name, elo)
-            self.tournament.add_player(player)
-            player.save player à creer"""
-        self.tournament.players = players
-        Tournament.save(self.tournament.serializer())
+
+        for i in range(8):
+            first_name = get_player_first_name()
+            last_name = get_player_last_name()
+            elo = get_player_elo()
+            date_of_birth = get_date_of_birth()
+            player_gender = get_player_gender()
+            self.tournament.players = Player(first_name, last_name, elo, date_of_birth, player_gender)
+            self.tournament.players.save_player()
+
+
+        """self.tournament.players = players
+        Tournament.save(self.tournament.serializer())"""
 
     def print_player(self):
         """print_player(self.tournament.players)"""
@@ -167,33 +174,27 @@ class TournamentControler:
 
         if rounds_to_run == 4:
             self.run_first_round()
-            if(self.is_stop()):
+            """if(self.is_stop()):
                 Tournament.update(self.tournament.serializer(), tournament_name)
-                return
+                return"""
             for i in range(2, 5):
                 self.run_round(i)
-                if (self.is_stop()):
+                """if (self.is_stop()):
                     Tournament.update(self.tournament.serializer(), tournament_name)
-                    break
+                    break"""
         else:
             for i in range(rounds_to_run):
                 self.run_round(5-rounds_to_run+i)
-                if (self.is_stop()):
+                """if (self.is_stop()):
                     Tournament.update(self.tournament.serializer(), tournament_name)
-                    break
+                    break"""
+        Tournament.update(self.tournament.serializer(), tournament_name)
+
 
     def search_tournament(self):
         names = Tournament.get_ongoing_tournaments()
-        return(names)
+        return names
 
-    def choose_tournament(self):
-        tournament_choice = which_tournament_to_choose()
-        if tournament_choice == 1:
-            return
-        elif tournament_choice == 2:
-            return
-        elif tournament_choice == 3:
-            return
 
     def menu_home(self):
         is_app_run = True
@@ -203,14 +204,15 @@ class TournamentControler:
             if answer == "1":
                 self.new_tournament()
                 self.run_first_round()
-                if (self.is_stop()):
+                if self.is_stop():
                     Tournament.update(self.tournament.serializer(), self.tournament.name)
+                    print("toto")
                     continue
                 for i in range(2, 5):
                     self.run_round(i)
-                    if (self.is_stop()):
+                    if self.is_stop():
                         Tournament.update(self.tournament.serializer())
-                        continue
+                        break
             elif answer == "2":
                 names = Tournament.get_ongoing_tournaments()
                 for i in range(len(names)):
@@ -221,6 +223,7 @@ class TournamentControler:
                         tournament_number = int(choose_tournament)
                         if tournament_number >= 0 and tournament_number < len(names):
                             self.reload_tournament(names[tournament_number])
+                            break
                         else:
                             choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
                     except ValueError:
@@ -228,13 +231,60 @@ class TournamentControler:
                 print(names[tournament_number])
             elif answer == "3":
                 print_players_reports_menu()
+                answer = user_input_menu()
+                if answer == "1":
+                    self.players_ordered_by_name()
+                elif answer == "2":
+                    self.players_ordered_by_elo()
+                elif answer == "3":
+                    names = Tournament.get_ongoing_tournaments()
+                    for i in range(len(names)):
+                        print(f"{i} - {names[i]}")
+                    choose_tournament = which_tournament_to_choose()
+                elif answer == "4":
+                    Afficher tournoi + plyers order by elo
+                elif answer == "5":
+                    Tournament.get_all_tournaments() #afficher liste de tous les tournois
+                elif answer == "6":
+                    Afficher liste de tous les tours d'un tournoi
+                elif answer == "7":
+                    Afficher liste de tous les matchs dun tournoi
+
+
+
             elif answer == "4":
                 is_app_run = False
             else:
                 print("error input")
 
     def is_stop(self):
-        pass
+        ask_tournament_stop = continue_tournament()
+        ask_tournament_stop = ask_tournament_stop.lower()
+        while ask_tournament_stop != "yes" and ask_tournament_stop != "no":
+            print("Erreur de saisie, votre réponse doit être oui ou non")
+            ask_tournament_stop = continue_tournament()
+            ask_tournament_stop = ask_tournament_stop.lower()
+        if ask_tournament_stop == "yes":
+            return False
+        if ask_tournament_stop == "no":
+            return True
+
+    def players_ordered_by_name(self):  # tri des joueurs par ordre alphabétique
+        players = Tournament.get_all_players()
+        players.sort(key=lambda x: x.last_name, reverse=True)
+        print(players)
+        # créer une fonction dans la view créer et appeler un print
+
+
+    def players_ordered_by_elo(self):  # tri des joueurs par ordre de elo
+        players = Tournament.get_all_players()
+        players.sort(key=lambda x: x.elo, reverse=True)
+        print(players)
+
+    def tournament_players_ordered_by_name(self):
+        Tournament.get_all_tournaments()   #récupère la liste de tous les tournois présents
+        tournament_selection_for_player_reports()  #input qui demande quel est le tournoi concerné
+
 
 
 

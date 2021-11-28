@@ -51,7 +51,7 @@ class Tournament:
         tournaments = db.table("Tournaments")
         tournament = Query()
 
-        tournament = tournaments.search(tournaments.name == name)[0]
+        tournament = tournaments.search(tournament.name == name)[0]
         reload_tournament = Tournament(tournament["name"], tournament["time control"],
                                        tournament["place"], tournament["date"],
                                        tournament["description"])
@@ -90,6 +90,25 @@ class Tournament:
             if len(tournament["rounds"]) < 4:
                 tournament_names.append(tournament["name"])
         return tournament_names
+
+    @staticmethod
+    def get_all_tournaments():
+        db = TinyDB("db_tournament.json", indent=4)
+        tournaments = db.table("Tournaments")
+        tournaments = tournaments.all()
+        tournament_names = []
+        for tournament in tournaments:
+            tournament_names.append(tournament["name"])
+
+    @staticmethod
+    def get_all_players():
+        db = TinyDB("db_tournament.json", indent=4)
+        players = db.table("Players")
+        players = players.all()
+        players_names = []
+        for player in players:
+            players_names.append(player["last name"])
+        return players_names
 
 
 
