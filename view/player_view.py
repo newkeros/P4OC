@@ -29,3 +29,6 @@ def print_player(players):
         print(f"player gender : {player.player_gender}")
         print("--------------------")
 
+def display_player(players):
+    for index, player in enumerate(players):
+        print(f"{index + 1} : Name -> {player['name']}

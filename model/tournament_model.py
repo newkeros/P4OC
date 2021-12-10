@@ -99,6 +99,7 @@ class Tournament:
         tournament_names = []
         for tournament in tournaments:
             tournament_names.append(tournament["name"])
+        return tournament_names
 
     @staticmethod
     def get_all_players():
@@ -110,6 +111,21 @@ class Tournament:
             players_names.append(player["last name"])
         return players_names
 
+    @staticmethod
+    def get_tournament_players():                  #récupérer le nom d'un tournoi précis (faire comme le désiarializer)
+        db = TinyDB("db_tournament.json", indent=4)
+        players = db.table("Tournaments")
+        players = players.all()
+        players_names = []
+        for player in players:
+            players_names.append(player["last name"])
+        return players_names
+
+    @staticmethod
+    def print_tournament(self, tournament_name):
+        self.tournament = Tournament.deserializer(tournament_name)
+
+
 
 
     def get_user_input(range):
@@ -118,3 +134,86 @@ class Tournament:
             input_user = input("Entrer votre choix  : ")
         return int(input_user)
 
+
+    def print_tournament_player(self,name):
+        db = TinyDB("db_tournament.json", indent=4)
+        tournaments = db.table("Tournaments")
+        tournament = Query()
+
+        tournament = tournaments.search(tournament.name == name)[0]
+        reload_tournament = Tournament(tournament["name"])
+        for player in tournament["players"]:
+            reload_player = Player(player["first name"], player["last name"]
+            reload_tournament.add_player(reload_player)
+        return reload_tournament
+
+    def print_tournament_player_elo():
+        db = TinyDB("db_tournament.json", indent=4)
+        tournaments = db.table("Tournaments")
+        tournament = Query()
+
+        tournament = tournaments.search(tournament.name == name)[0]
+        reload_tournament = Tournament(tournament["name"])
+        for player in tournament["players"]:
+            reload_player = Player(player["elo"])
+            reload_tournament.add_player(reload_player)
+        return reload_tournament
+
+    def print_tournament_rounds():
+        db = TinyDB("db_tournament.json", indent=4)
+        tournaments = db.table("Tournaments")
+        tournament = Query()
+
+        tournament = tournaments.search(tournament.name == name)[0]
+        reload_tournament = Tournament(tournament["name"])
+        for round in tournament["rounds"]:
+            reload_round = Round(round["number"])
+            reload_tournament.add_round(reload_round)
+        return reload_tournament
+
+    def print_tournament_matchs():
+        db = TinyDB("db_tournament.json", indent=4)
+        tournaments = db.table("Tournaments")
+        tournament = Query()
+
+        tournament = tournaments.search(tournament.name == name)[0]
+        reload_tournament = Tournament(tournament["name"])
+        for round in tournament["rounds"]:
+            reload_round = Round(round["number"])
+            for match in round["matchs"]:
+                player1 = Player(match["player1"]["first name"], match["player1"]["last name"],
+                                 match["player1"]["elo"], match["player1"]["date of birth"],
+                                 match["player1"]["player's gender"],
+                                 match["player1"]["score"],
+                                 match["player1"]["opponent list"])
+                player2 = (match["player2"]["first name"], match["player2"]["last name"],
+                           match["player2"]["elo"], match["player2"]["date of birth"],
+                           match["player2"]["player's gender"],
+                           match["player2"]["score"],
+                           match["player2"]["opponent list"])
+                reload_match = Match(player1, player2, match["score player 1"], match["Score player 2"])
+                reload_round.add_reload_match(reload_match)
+            reload_tournament.add_round(reload_round)
+        return reload_tournament
+
+
+
+    elif answer == "6":
+    Afficher
+    liste
+    de
+    tous
+    les
+    tours
+    d
+    'un tournoi
+
+elif answer == "7":
+Afficher
+liste
+de
+tous
+les
+matchs
+dun
+tournoi

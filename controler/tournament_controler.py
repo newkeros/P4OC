@@ -214,48 +214,14 @@ class TournamentControler:
                         Tournament.update(self.tournament.serializer())
                         break
             elif answer == "2":
-                names = Tournament.get_ongoing_tournaments()
-                for i in range(len(names)):
-                    print(f"{i} - {names[i]}")
-                choose_tournament = which_tournament_to_choose()
-                while True:
-                    try:
-                        tournament_number = int(choose_tournament)
-                        if tournament_number >= 0 and tournament_number < len(names):
-                            self.reload_tournament(names[tournament_number])
-                            break
-                        else:
-                            choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
-                    except ValueError:
-                        choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
-                print(names[tournament_number])
+                self.resume_ongoing_tournament() # affiche les tournois et demande de choisir
             elif answer == "3":
-                print_players_reports_menu()
-                answer = user_input_menu()
-                if answer == "1":
-                    self.players_ordered_by_name()
-                elif answer == "2":
-                    self.players_ordered_by_elo()
-                elif answer == "3":
-                    names = Tournament.get_ongoing_tournaments()
-                    for i in range(len(names)):
-                        print(f"{i} - {names[i]}")
-                    choose_tournament = which_tournament_to_choose()
-                elif answer == "4":
-                    Afficher tournoi + plyers order by elo
-                elif answer == "5":
-                    Tournament.get_all_tournaments() #afficher liste de tous les tournois
-                elif answer == "6":
-                    Afficher liste de tous les tours d'un tournoi
-                elif answer == "7":
-                    Afficher liste de tous les matchs dun tournoi
-
-
-
+                self.get_reports_menu()
             elif answer == "4":
                 is_app_run = False
             else:
                 print("error input")
+               
 
     def is_stop(self):
         ask_tournament_stop = continue_tournament()
@@ -272,18 +238,119 @@ class TournamentControler:
     def players_ordered_by_name(self):  # tri des joueurs par ordre alphabétique
         players = Tournament.get_all_players()
         players.sort(key=lambda x: x.last_name, reverse=True)
-        print(players)
+        print(players) # appeler le display player
         # créer une fonction dans la view créer et appeler un print
+        # créer display player dans la view
 
 
     def players_ordered_by_elo(self):  # tri des joueurs par ordre de elo
         players = Tournament.get_all_players()
         players.sort(key=lambda x: x.elo, reverse=True)
-        print(players)
+        print(players) # appeler le display player
 
     def tournament_players_ordered_by_name(self):
         Tournament.get_all_tournaments()   #récupère la liste de tous les tournois présents
         tournament_selection_for_player_reports()  #input qui demande quel est le tournoi concerné
+
+    def resume_ongoing_tournament(self):
+        names = Tournament.get_ongoing_tournaments()
+        for i in range(len(names)):  # affichage
+            print(f"{i} - {names[i]}")
+        choose_tournament = which_tournament_to_choose()  # quel tournoi reprendre
+        while True:
+            try:
+                tournament_number = int(choose_tournament)
+                if tournament_number >= 0 and tournament_number < len(names):
+                    self.reload_tournament(names[tournament_number])
+                    break
+                else:
+                    choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
+            except ValueError:
+                choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
+        print(names[tournament_number])
+
+    def get_reports_menu(self):
+        print_players_reports_menu()  # mettre ça dans une fonction + changer le nom
+        answer = user_input_menu()
+        if answer == "1":
+            self.players_ordered_by_name()
+        elif answer == "2":
+            self.players_ordered_by_elo()
+        elif answer == "3":  # affiche liste players d'un tournoi choisi
+            names = Tournament.get_all_tournaments()
+            for i in range(len(names)):
+                print(f"{i} - {names[i]}")
+            choose_tournament = which_tournament_to_choose()
+            while True:
+                try:
+                    tournament_number = int(choose_tournament)
+                    if tournament_number >= 0 and tournament_number < len(names):
+                        Tournament.print_tournament_player(names)
+                        break
+                    else:
+                        choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
+                except ValueError:
+                    choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
+            print(Tournament.print_tournament_player(names))
+        elif answer == "4":
+            names = Tournament.get_all_tournaments()
+            for i in range(len(names)):
+                print(f"{i} - {names[i]}")
+            choose_tournament = which_tournament_to_choose()
+            while True:
+                try:
+                    tournament_number = int(choose_tournament)
+                    if tournament_number >= 0 and tournament_number < len(names):
+                        Tournament.print_tournament_player_elo()
+                        break
+                    else:
+                        choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
+                except ValueError:
+                    choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
+            print(Tournament.print_tournament_player_elo())
+        elif answer == "5":
+            Tournament.get_all_tournaments()
+        elif answer == "6":
+            names = Tournament.get_all_tournaments()
+            for i in range(len(names)):
+                print(f"{i} - {names[i]}")
+            choose_tournament = which_tournament_to_choose()
+            while True:
+                try:
+                    tournament_number = int(choose_tournament)
+                    if tournament_number >= 0 and tournament_number < len(names):
+                        Tournament.print_tournament_rounds()
+                        break
+                    else:
+                        choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
+                except ValueError:
+                    choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
+            print(Tournament.print_tournament_rounds())
+        elif answer == 7:
+            names = Tournament.get_all_tournaments()
+            for i in range(len(names)):
+                print(f"{i} - {names[i]}")
+            choose_tournament = which_tournament_to_choose()
+            while True:
+                try:
+                    tournament_number = int(choose_tournament)
+                    if tournament_number >= 0 and tournament_number < len(names):
+                        Tournament.print_tournament_matchs()
+                        break
+                    else:
+                        choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
+                except ValueError:
+                    choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
+            print(Tournament.print_tournament_matchs())
+
+
+
+
+
+
+
+
+
 
 
 

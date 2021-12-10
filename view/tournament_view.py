@@ -1,6 +1,6 @@
 import datetime
 from utils import is_date_valid
-from model.tournament_model import get_all_players
+from model.tournament_model import Tournament
 
 def get_tournament_name():
     name = input("Enter the tournament name : ")
@@ -27,7 +27,7 @@ def get_tournament_description():
     return description
 
 def which_tournament_to_choose():
-    tournament_choice = input("Quel tournoi souhaitez-vous reprendre ? : ")
+    tournament_choice = input("Quel tournoi souhaitez-vous selectionner ? : ")
     return tournament_choice
 
 def print_home_menu():
@@ -36,7 +36,7 @@ def print_home_menu():
     print("3: See reports and results")
     print("4: Quit")
 
-def print_players_reports_menu():
+def print_reports_menu():
     print("1: get all players in alphabetic order")
     """modele va donner l'info qui la transmet au controleur qui fait afficher par la view"""
     print("2: get players in elo ascending order")
@@ -55,7 +55,7 @@ def tournament_selection_for_player_reports():
     return answer
 
 def print_all_players():
-    all_players = get_all_players()
+    all_players = Tournament.get_all_players()
     print(all_players)
 
 
