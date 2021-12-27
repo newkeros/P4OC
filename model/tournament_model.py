@@ -3,6 +3,7 @@ from model.player import Player
 from model.round import Round
 from model.match import Match
 
+
 class Tournament:
     def __init__(self, name, time_control, date, place, description):
         self.name = name
@@ -13,7 +14,6 @@ class Tournament:
         self.players = []
         self.rounds = []
 
-
     def add_player(self, player):
         self.players.append(player)
 
@@ -21,13 +21,15 @@ class Tournament:
         self.rounds.append(round)
 
     def serializer(self):
-        data = {"name": self.name,
-                "time control": self.time_control,
-                "date": self.date,
-                "place": self.place,
-                "description": self.description,
-                "players": [player.serializer() for player in self.players],
-                "rounds": [round.serializer() for round in self.rounds]}
+        data = {
+            "name": self.name,
+            "time control": self.time_control,
+            "date": self.date,
+            "place": self.place,
+            "description": self.description,
+            "players": [player.serializer() for player in self.players],
+            "rounds": [round.serializer() for round in self.rounds],
+        }
         return data
 
     @staticmethod
@@ -43,8 +45,6 @@ class Tournament:
         tournament = Query()
         tournaments.update(serialized_tournament, tournament.name == name)
 
-
-
     @staticmethod
     def deserializer(name):
         db = TinyDB("db_tournament.json", indent=4)
@@ -52,30 +52,50 @@ class Tournament:
         tournament = Query()
 
         tournament = tournaments.search(tournament.name == name)[0]
-        reload_tournament = Tournament(tournament["name"], tournament["time control"],
-                                       tournament["place"], tournament["date"],
-                                       tournament["description"])
+        reload_tournament = Tournament(
+            tournament["name"],
+            tournament["time control"],
+            tournament["place"],
+            tournament["date"],
+            tournament["description"],
+        )
 
         for player in tournament["players"]:
-            reload_player = Player(player["first name"], player["last name"], player["elo"],
-                                   player["date of birth"], player["player's gender"], player["score"],
-                                   player["opponent list"])
+            reload_player = Player(
+                player["first name"],
+                player["last name"],
+                player["elo"],
+                player["date of birth"],
+                player["player's gender"],
+                player["score"],
+                player["opponent list"],
+            )
             reload_tournament.add_player(reload_player)
 
         for round in tournament["rounds"]:
             reload_round = Round(round["number"])
             for match in round["matchs"]:
-                player1 = Player(match["player1"]["first name"], match["player1"]["last name"],
-                                 match["player1"]["elo"], match["player1"]["date of birth"],
-                                 match["player1"]["player's gender"],
-                                 match["player1"]["score"],
-                                 match["player1"]["opponent list"])
-                player2 = (match["player2"]["first name"], match["player2"]["last name"],
-                                 match["player2"]["elo"], match["player2"]["date of birth"],
-                                 match["player2"]["player's gender"],
-                                 match["player2"]["score"],
-                                 match["player2"]["opponent list"])
-                reload_match = Match(player1, player2, match["score player 1"], match["Score player 2"])
+                player1 = Player(
+                    match["player1"]["first name"],
+                    match["player1"]["last name"],
+                    match["player1"]["elo"],
+                    match["player1"]["date of birth"],
+                    match["player1"]["player's gender"],
+                    match["player1"]["score"],
+                    match["player1"]["opponent list"],
+                )
+                player2 = (
+                    match["player2"]["first name"],
+                    match["player2"]["last name"],
+                    match["player2"]["elo"],
+                    match["player2"]["date of birth"],
+                    match["player2"]["player's gender"],
+                    match["player2"]["score"],
+                    match["player2"]["opponent list"],
+                )
+                reload_match = Match(
+                    player1, player2, match["score player 1"], match["Score player 2"]
+                )
                 reload_round.add_reload_match(reload_match)
             reload_tournament.add_round(reload_round)
         return reload_tournament
@@ -105,14 +125,10 @@ class Tournament:
     def get_all_players():
         db = TinyDB("db_tournament.json", indent=4)
         players = db.table("Players")
-        players = players.all()
-        players_names = []
-        for player in players:
-            players_names.append(player["last name"])
-        return players_names
+        return players.all()
 
     @staticmethod
-    def get_tournament_players():                  #récupérer le nom d'un tournoi précis (faire comme le désiarializer)
+    def get_tournament_players():  # récupérer le nom d'un tournoi précis (faire comme le désiarializer)
         db = TinyDB("db_tournament.json", indent=4)
         players = db.table("Tournaments")
         players = players.all()
@@ -125,95 +141,43 @@ class Tournament:
     def print_tournament(self, tournament_name):
         self.tournament = Tournament.deserializer(tournament_name)
 
-
-
-
     def get_user_input(range):
         input_user = input("Entrer votre choix  : ")
         while not int(input_user) > 0 or not int(input_user) <= range:
             input_user = input("Entrer votre choix  : ")
         return int(input_user)
 
-
-    def print_tournament_player(self,name):
+    @staticmethod
+    def get_tournament_player(name):
         db = TinyDB("db_tournament.json", indent=4)
         tournaments = db.table("Tournaments")
         tournament = Query()
 
         tournament = tournaments.search(tournament.name == name)[0]
-        reload_tournament = Tournament(tournament["name"])
-        for player in tournament["players"]:
-            reload_player = Player(player["first name"], player["last name"]
-            reload_tournament.add_player(reload_player)
-        return reload_tournament
 
-    def print_tournament_player_elo():
+        return tournament["players"]
+
+    @staticmethod
+    def get_tournament_rounds(name):
         db = TinyDB("db_tournament.json", indent=4)
         tournaments = db.table("Tournaments")
         tournament = Query()
 
         tournament = tournaments.search(tournament.name == name)[0]
-        reload_tournament = Tournament(tournament["name"])
-        for player in tournament["players"]:
-            reload_player = Player(player["elo"])
-            reload_tournament.add_player(reload_player)
-        return reload_tournament
+        return tournament[
+            "rounds"
+        ]  # créer à part un display round comme pour le display player
 
-    def print_tournament_rounds():
+    @staticmethod
+    def get_tournament_matchs(name):
         db = TinyDB("db_tournament.json", indent=4)
         tournaments = db.table("Tournaments")
         tournament = Query()
 
         tournament = tournaments.search(tournament.name == name)[0]
-        reload_tournament = Tournament(tournament["name"])
-        for round in tournament["rounds"]:
-            reload_round = Round(round["number"])
-            reload_tournament.add_round(reload_round)
-        return reload_tournament
-
-    def print_tournament_matchs():
-        db = TinyDB("db_tournament.json", indent=4)
-        tournaments = db.table("Tournaments")
-        tournament = Query()
-
-        tournament = tournaments.search(tournament.name == name)[0]
-        reload_tournament = Tournament(tournament["name"])
-        for round in tournament["rounds"]:
-            reload_round = Round(round["number"])
-            for match in round["matchs"]:
-                player1 = Player(match["player1"]["first name"], match["player1"]["last name"],
-                                 match["player1"]["elo"], match["player1"]["date of birth"],
-                                 match["player1"]["player's gender"],
-                                 match["player1"]["score"],
-                                 match["player1"]["opponent list"])
-                player2 = (match["player2"]["first name"], match["player2"]["last name"],
-                           match["player2"]["elo"], match["player2"]["date of birth"],
-                           match["player2"]["player's gender"],
-                           match["player2"]["score"],
-                           match["player2"]["opponent list"])
-                reload_match = Match(player1, player2, match["score player 1"], match["Score player 2"])
-                reload_round.add_reload_match(reload_match)
-            reload_tournament.add_round(reload_round)
-        return reload_tournament
-
-
-
-    elif answer == "6":
-    Afficher
-    liste
-    de
-    tous
-    les
-    tours
-    d
-    'un tournoi
-
-elif answer == "7":
-Afficher
-liste
-de
-tous
-les
-matchs
-dun
-tournoi
+        matchs = []
+        for round in tournament[
+            "rounds"
+        ]:  # dans chaque round append match. Puis return matchs à la fin
+            matchs.append(round["matchs"])
+        return matchs

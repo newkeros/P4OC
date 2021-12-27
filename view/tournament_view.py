@@ -2,6 +2,7 @@ import datetime
 from utils import is_date_valid
 from model.tournament_model import Tournament
 
+
 def get_tournament_name():
     name = input("Enter the tournament name : ")
     return name
@@ -20,15 +21,18 @@ def get_tournament_place():
 def get_tournament_date():
     tournament_date = input("Entrez la date du tournoi : ")
     return tournament_date
-    #proposer input de date à date ?
+    # proposer input de date à date ?
+
 
 def get_tournament_description():
     description = input("Entrez une description du tournoi : ")
     return description
 
+
 def which_tournament_to_choose():
     tournament_choice = input("Quel tournoi souhaitez-vous selectionner ? : ")
     return tournament_choice
+
 
 def print_home_menu():
     print("1: start new tournament")
@@ -36,27 +40,51 @@ def print_home_menu():
     print("3: See reports and results")
     print("4: Quit")
 
+
 def print_reports_menu():
-    print("1: get all players in alphabetic order")
-    """modele va donner l'info qui la transmet au controleur qui fait afficher par la view"""
-    print("2: get players in elo ascending order")
-    print("3: get players in elo descending order")
+    print("1: Players ordered by name")
+    print("2: Players ordered by elo")
+    print("3: Players list from a tournament")
+    print("4: Players from a tournament ordered by elo")
+    print("5: All tournaments list")
+    print("6: all rounds list")
+    print("7: All matchs list")
+
 
 def user_input_menu():
     answer = input("Faites votre choix : ")
     return answer
 
+
 def continue_tournament():
     name = input("Voulez-vous continuer le tournoi (Oui/Non) : ")
     return name
 
+
 def tournament_selection_for_player_reports():
     answer = input("De quel tournoi voulez vous afficher la liste des joueurs ? ")
     return answer
+
 
 def print_all_players():
     all_players = Tournament.get_all_players()
     print(all_players)
 
 
+def print_players_reports_menu():
+    return None
 
+
+def display_match(match):
+    for index, match in enumerate(match):
+        print(
+            f" Joueur 1 : {match['player1']['first name']}, {match['player1']['last name']}"
+            f" Score joueur 1 : {match['player1']['score']},"
+            f" Joueur 2 : {match['player2']['first name']}, {match['player2']['last name']}"
+            f" Score joueur 2 : {match['player2']['score']}"
+        )
+
+
+def display_round(round):
+    for index, round in enumerate(round):
+        print(f"{index + 1} : Nombre de rounds : {round['number']}")

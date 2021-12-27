@@ -1,5 +1,6 @@
 from model.match import Match
 
+
 class Round:
     def __init__(self, number):
         self.number = number
@@ -15,6 +16,8 @@ class Round:
         self.matchs.append(match)
 
     def serializer(self):
-        data = {"number": self.number,
-                "matchs": [match.serializer() for match in self.matchs]}
+        data = {
+            "number": self.number,
+            "matchs": [match.serializer() for match in self.matchs],
+        }
         return data

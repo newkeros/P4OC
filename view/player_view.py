@@ -2,20 +2,26 @@ def get_player_first_name():
     first_name = input("Enter the player first name : ")
     return first_name
 
+
 def get_player_last_name():
     last_name = input("Enter the player name : ")
     return last_name
+
 
 def get_player_elo():
     elo = input("Enter the player elo : ")
     return elo
 
+
 def get_date_of_birth():
     date_of_birth = input("Entrez la date de naissance : ")
     return date_of_birth
 
+
 def get_player_gender():
-    player_gender = input("Le joueur est-il un homme ou une femme ? (dans le format H/F)")
+    player_gender = input(
+        "Le joueur est-il un homme ou une femme ? (dans le format H/F)"
+    )
     return player_gender
 
 
@@ -29,6 +35,11 @@ def print_player(players):
         print(f"player gender : {player.player_gender}")
         print("--------------------")
 
+
 def display_player(players):
     for index, player in enumerate(players):
-        print(f"{index + 1} : Name -> {player['name']}
+        print(
+            f"{index + 1} : Nom du joueur : {player['last name']}, "
+            f" Prénom du joueur : {player['first name']}, "
+            f" Classement du joueur : {player['elo']}"
+        )

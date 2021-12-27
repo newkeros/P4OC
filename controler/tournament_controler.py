@@ -1,12 +1,31 @@
 from model.tournament_model import Tournament
 from model.player import Player
 from model.round import Round
-from view.tournament_view import get_tournament_name, get_tournament_time_control, get_tournament_date, \
-    get_tournament_place, get_tournament_description, which_tournament_to_choose, print_home_menu, \
-    print_players_reports_menu, user_input_menu, continue_tournament, \
-    tournament_selection_for_player_reports, print_all_players
-from view.player_view import print_player, get_player_first_name, get_player_last_name, get_player_elo, \
-    get_date_of_birth, get_player_gender
+from view.tournament_view import (
+    get_tournament_name,
+    get_tournament_time_control,
+    get_tournament_date,
+    get_tournament_place,
+    get_tournament_description,
+    which_tournament_to_choose,
+    print_home_menu,
+    print_players_reports_menu,
+    user_input_menu,
+    continue_tournament,
+    tournament_selection_for_player_reports,
+    print_reports_menu,
+    display_match,
+    display_round,
+)
+from view.player_view import (
+    print_player,
+    get_player_first_name,
+    get_player_last_name,
+    get_player_elo,
+    get_date_of_birth,
+    get_player_gender,
+    display_player,
+)
 from view.round_view import print_match_result, enter_score, print_final_round_score
 from utils import is_date_valid
 from model.match import Match
@@ -31,8 +50,13 @@ class TournamentControler:
         tournament_date = self.check_tournament_date()
         tournament_place = self.check_tournament_place()
         tournament_description = self.check_tournament_description()
-        self.tournament = Tournament(name, time_control, tournament_date, tournament_place, tournament_description)
-
+        self.tournament = Tournament(
+            name,
+            time_control,
+            tournament_date,
+            tournament_place,
+            tournament_description,
+        )
 
         for i in range(8):
             first_name = get_player_first_name()
@@ -40,9 +64,10 @@ class TournamentControler:
             elo = get_player_elo()
             date_of_birth = get_date_of_birth()
             player_gender = get_player_gender()
-            self.tournament.players = Player(first_name, last_name, elo, date_of_birth, player_gender)
+            self.tournament.players = Player(
+                first_name, last_name, elo, date_of_birth, player_gender
+            )
             self.tournament.players.save_player()
-
 
         """self.tournament.players = players
         Tournament.save(self.tournament.serializer())"""
@@ -54,15 +79,23 @@ class TournamentControler:
     def check_tournament_name(self):
         tournament_name = get_tournament_name()
         while not tournament_name.isalpha():
-            print("Erreur de saisie, le nom du tournoi ne peut contenir que des lettres")
+            print(
+                "Erreur de saisie, le nom du tournoi ne peut contenir que des lettres"
+            )
             tournament_name = get_tournament_name()
         return tournament_name
 
     def check_tournament_time_control(self):
         time_control = get_tournament_time_control()
         time_control = time_control.lower()
-        while time_control != "bullet" and time_control != "blitz" and time_control != "Coup rapide":
-            print("Erreur de saisie, le type de partie doit être Bullet, Blitz ou Coup rapide")
+        while (
+            time_control != "bullet"
+            and time_control != "blitz"
+            and time_control != "Coup rapide"
+        ):
+            print(
+                "Erreur de saisie, le type de partie doit être Bullet, Blitz ou Coup rapide"
+            )
             time_control = get_tournament_time_control()
         return time_control
 
@@ -76,7 +109,9 @@ class TournamentControler:
     def check_tournament_place(self):
         tournament_place = get_tournament_place()
         while not tournament_place.isalpha():
-            print("Erreur de saisie, le lieu du tournoi ne peut contenir que des lettres")
+            print(
+                "Erreur de saisie, le lieu du tournoi ne peut contenir que des lettres"
+            )
             tournament_place = get_tournament_place()
         return tournament_place
 
@@ -87,22 +122,21 @@ class TournamentControler:
             get_tournament_description()"""
         return tournament_description
 
-
-
     def run_first_round(self):
         # algorithme pour créer les premier round
-        self.tournament.players.sort(key=lambda x: x.elo) #trier les joueurs par elo
-        round1 = Round("1") #nom du first round
-        self.tournament.add_round(round1) #ajoute le round à la liste
+        self.tournament.players.sort(key=lambda x: x.elo)  # trier les joueurs par elo
+        round1 = Round("1")  # nom du first round
+        self.tournament.add_round(round1)  # ajoute le round à la liste
         for i in range(4):
-            round1.add_match(self.tournament.players[i], self.tournament.players[4 + i]) #1er du haut du tableau contre 5ème
+            round1.add_match(
+                self.tournament.players[i], self.tournament.players[4 + i]
+            )  # 1er du haut du tableau contre 5ème
 
-        for match in self.tournament.rounds[0].matchs: #matching de joueurs
+        for match in self.tournament.rounds[0].matchs:  # matching de joueurs
             match.score_player1, match.score_player2 = self.handle_score()
             print_match_result(match)
             self.update_player_score(match)
         print_final_round_score(self.tournament.rounds[0].matchs, round1.number)
-
 
     def handle_score(self):
         score = enter_score()
@@ -120,8 +154,6 @@ class TournamentControler:
         match.player1.score += match.score_player1
         match.player2.score += match.score_player2
 
-
-
     def get_player(self):
         players = list()
 
@@ -133,12 +165,10 @@ class TournamentControler:
 
         return players
 
-
     def run_round(self, round_number):
         round = Round(str(round_number))
         self.tournament.add_round(round)
         players = self.get_player()
-
 
         i = 0
 
@@ -165,8 +195,9 @@ class TournamentControler:
             match.score_player1, match.score_player2 = self.handle_score()
             print_match_result(match)
             self.update_player_score(match)
-        print_final_round_score(self.tournament.rounds[round_number - 1].matchs, round.number)
-
+        print_final_round_score(
+            self.tournament.rounds[round_number - 1].matchs, round.number
+        )
 
     def reload_tournament(self, tournament_name):
         self.tournament = Tournament.deserializer(tournament_name)
@@ -184,17 +215,15 @@ class TournamentControler:
                     break"""
         else:
             for i in range(rounds_to_run):
-                self.run_round(5-rounds_to_run+i)
+                self.run_round(5 - rounds_to_run + i)
                 """if (self.is_stop()):
                     Tournament.update(self.tournament.serializer(), tournament_name)
                     break"""
         Tournament.update(self.tournament.serializer(), tournament_name)
 
-
     def search_tournament(self):
         names = Tournament.get_ongoing_tournaments()
         return names
-
 
     def menu_home(self):
         is_app_run = True
@@ -205,7 +234,9 @@ class TournamentControler:
                 self.new_tournament()
                 self.run_first_round()
                 if self.is_stop():
-                    Tournament.update(self.tournament.serializer(), self.tournament.name)
+                    Tournament.update(
+                        self.tournament.serializer(), self.tournament.name
+                    )
                     print("toto")
                     continue
                 for i in range(2, 5):
@@ -214,14 +245,14 @@ class TournamentControler:
                         Tournament.update(self.tournament.serializer())
                         break
             elif answer == "2":
-                self.resume_ongoing_tournament() # affiche les tournois et demande de choisir
+                self.resume_ongoing_tournament()  # affiche les tournois et demande de choisir
             elif answer == "3":
+                print_reports_menu()
                 self.get_reports_menu()
             elif answer == "4":
                 is_app_run = False
             else:
                 print("error input")
-               
 
     def is_stop(self):
         ask_tournament_stop = continue_tournament()
@@ -237,20 +268,20 @@ class TournamentControler:
 
     def players_ordered_by_name(self):  # tri des joueurs par ordre alphabétique
         players = Tournament.get_all_players()
-        players.sort(key=lambda x: x.last_name, reverse=True)
-        print(players) # appeler le display player
-        # créer une fonction dans la view créer et appeler un print
-        # créer display player dans la view
-
+        print(players)
+        players.sort(key=lambda x: x["last name"], reverse=True)
+        display_player(players)
 
     def players_ordered_by_elo(self):  # tri des joueurs par ordre de elo
         players = Tournament.get_all_players()
-        players.sort(key=lambda x: x.elo, reverse=True)
-        print(players) # appeler le display player
+        print(players)
+        players.sort(key=lambda x: x["elo"], reverse=True)
+        display_player(players)
+        # appeler le display player
 
     def tournament_players_ordered_by_name(self):
-        Tournament.get_all_tournaments()   #récupère la liste de tous les tournois présents
-        tournament_selection_for_player_reports()  #input qui demande quel est le tournoi concerné
+        Tournament.get_all_tournaments()  # récupère la liste de tous les tournois présents
+        tournament_selection_for_player_reports()  # input qui demande quel est le tournoi concerné
 
     def resume_ongoing_tournament(self):
         names = Tournament.get_ongoing_tournaments()
@@ -264,7 +295,9 @@ class TournamentControler:
                     self.reload_tournament(names[tournament_number])
                     break
                 else:
-                    choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
+                    choose_tournament = input(
+                        "Erreur : Choisir le numéro du tournoi : "
+                    )
             except ValueError:
                 choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
         print(names[tournament_number])
@@ -285,13 +318,23 @@ class TournamentControler:
                 try:
                     tournament_number = int(choose_tournament)
                     if tournament_number >= 0 and tournament_number < len(names):
-                        Tournament.print_tournament_player(names)
+                        players_list = Tournament.get_tournament_player(
+                            names[tournament_number]
+                        )  # TypeError: get_tournament_player() missing 1 required positional argument: 'name'
+                        display_player(players_list)
+
                         break
                     else:
-                        choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
+                        choose_tournament = input(
+                            "Erreur : Choisir le numéro du tournoi : "
+                        )
                 except ValueError:
-                    choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
-            print(Tournament.print_tournament_player(names))
+                    choose_tournament = input(
+                        "Erreur : Choisir le numéro du tournoi : "
+                    )
+            print(
+                Tournament.get_tournament_player(names[tournament_number])
+            )  # changer par le display player ?
         elif answer == "4":
             names = Tournament.get_all_tournaments()
             for i in range(len(names)):
@@ -301,15 +344,22 @@ class TournamentControler:
                 try:
                     tournament_number = int(choose_tournament)
                     if tournament_number >= 0 and tournament_number < len(names):
-                        Tournament.print_tournament_player_elo()
+                        self.players_ordered_by_elo()  # ajouter le sort + display player    AttributeError: type object 'Tournament' has no attribute 'get_tournament_player_elo'
                         break
                     else:
-                        choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
+                        choose_tournament = input(
+                            "Erreur : Choisir le numéro du tournoi : "
+                        )
                 except ValueError:
-                    choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
-            print(Tournament.print_tournament_player_elo())
+                    choose_tournament = input(
+                        "Erreur : Choisir le numéro du tournoi : "
+                    )
+            return self.players_ordered_by_elo()
         elif answer == "5":
             Tournament.get_all_tournaments()
+            names = Tournament.get_all_tournaments()
+            for i in range(len(names)):
+                print(f"{i} - {names[i]}")
         elif answer == "6":
             names = Tournament.get_all_tournaments()
             for i in range(len(names)):
@@ -319,14 +369,21 @@ class TournamentControler:
                 try:
                     tournament_number = int(choose_tournament)
                     if tournament_number >= 0 and tournament_number < len(names):
-                        Tournament.print_tournament_rounds()
+                        rounds = Tournament.get_tournament_rounds(
+                            names[tournament_number]
+                        )
+                        display_round(rounds)
                         break
                     else:
-                        choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
+                        choose_tournament = input(
+                            "Erreur : Choisir le numéro du tournoi : "
+                        )
                 except ValueError:
-                    choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
-            print(Tournament.print_tournament_rounds())
-        elif answer == 7:
+                    choose_tournament = input(
+                        "Erreur : Choisir le numéro du tournoi : "
+                    )
+            display_round(rounds)
+        elif answer == "7":
             names = Tournament.get_all_tournaments()
             for i in range(len(names)):
                 print(f"{i} - {names[i]}")
@@ -335,24 +392,18 @@ class TournamentControler:
                 try:
                     tournament_number = int(choose_tournament)
                     if tournament_number >= 0 and tournament_number < len(names):
-                        Tournament.print_tournament_matchs()
+                        matchs_list = Tournament.get_tournament_matchs(
+                            names[tournament_number]
+                        )
+                        display_match(
+                            matchs_list
+                        )  # TypeError: list indices must be integers or slices, not str
                         break
                     else:
-                        choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
+                        choose_tournament = input(
+                            "Erreur : Choisir le numéro du tournoi : "
+                        )
                 except ValueError:
-                    choose_tournament = input("Erreur : Choisir le numéro du tournoi : ")
-            print(Tournament.print_tournament_matchs())
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                    choose_tournament = input(
+                        "Erreur : Choisir le numéro du tournoi : "
+                    )
