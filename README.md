@@ -36,7 +36,7 @@ A menu will pop. You can choose:
 
 ## Made with:
 
-OpenClassrooms website 
-TinyDb documentation 
-Python crash course book from Eric Matthes 
+OpenClassrooms website
+TinyDb documentation
+Python crash course book from Eric Matthes
 The continuous help of my mentor
