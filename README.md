@@ -3,7 +3,7 @@
 
 
 
-forthebadge
+https://forthebadge.com/images/badges/made-with-python.svg
 
 What’s the purpose of this script This script let you manage a chess tournament. You can create one or reload one already started. It let you match players, add the scores and update the rankings
 
