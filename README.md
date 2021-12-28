@@ -16,7 +16,7 @@ tinydb==4.4.0
 
 This project is made with Python 3
 
-Clone it on your computer with the git clone command : <git clone  [https://github.com/newkeros/P4OC.git>](https://github.com/newkeros/P4OC.git%3E)
+Clone it on your computer with the git clone command : `<git clone  https://github.com/newkeros/P4OC.git>`
 
 Create a virtual environment with `<cd Projet_4 -m venv env>` and activate it
 
