@@ -22,6 +22,8 @@ Pygments==2.11.1
 tinydb==4.4.0
 zipp==3.7.0
 
+If you need to generate a flake8 html file use `<flake8 --format=html --htmldir=flake>`
+
 
 ## Set up the project
 
