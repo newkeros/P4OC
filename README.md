@@ -8,8 +8,17 @@ What’s the purpose of this script This script let you manage a chess tournamen
 
 What do you need to run this project is in the requirements.txt. You will find needed library. This library is mandatory to run the script.
 
+flake8==4.0.1
+flake8-html==0.4.1
+importlib-metadata==4.10.0
+Jinja2==3.0.3
+MarkupSafe==2.0.1
+mccabe==0.6.1
+pycodestyle==2.8.0
+pyflakes==2.4.0
+Pygments==2.11.1
 tinydb==4.4.0
-
+zipp==3.7.0
 
 
 ## Set up the project
