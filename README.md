@@ -4,7 +4,9 @@
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 
-What’s the purpose of this script This script let you manage a chess tournament. You can create one or reload one already started. It let you match players, add the scores and update the rankings
+## What’s the purpose of this script 
+
+This script let you manage a chess tournament. You can create one or reload one already started. It let you match players, add the scores and update the rankings
 
 What do you need to run this project is in the requirements.txt. You will find needed library. This library is mandatory to run the script.
 
