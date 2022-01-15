@@ -28,16 +28,7 @@ from view.player_view import (
 )
 from view.round_view import print_match_result, enter_score, print_final_round_score
 from utils import is_date_valid
-from model.match import Match
-from tinydb import Query
 
-
-"""players = [Player("Ranga", "Gonnage", 34, "04-03-1989", "Homme"), Player("Grégory", "Albert", 12, "04-03-1989", "Homme"),
-           Player("Jean-Marie", "x", 3, "04-03-1989", "Homme"), Player("toto", "toto", 100, "04-03-1989", "Homme"),
-           Player("bob", "test", 234, "04-03-1989", "Homme"),
-           Player("Igor", "Kasparov", 2830, "04-03-1989", "Homme"),
-           Player("guy", "montagné", 345, "04-03-1989", "Homme"),
-           Player("jack", "black", 32, "04-03-1989", "Homme")]"""
 
 
 class TournamentControler:
@@ -64,10 +55,9 @@ class TournamentControler:
             elo = get_player_elo()
             date_of_birth = get_date_of_birth()
             player_gender = get_player_gender()
-            self.tournament.players = Player(
-                first_name, last_name, elo, date_of_birth, player_gender
-            )
-            self.tournament.players.save_player()
+            player = Player(first_name, last_name, elo, date_of_birth, player_gender)
+            self.tournament.players.append(player)
+            player.save_player()
 
         """self.tournament.players = players
         Tournament.save(self.tournament.serializer())"""
@@ -237,10 +227,12 @@ class TournamentControler:
                     Tournament.update(
                         self.tournament.serializer(), self.tournament.name
                     )
-                    print("toto")
                     continue
                 for i in range(2, 5):
                     self.run_round(i)
+                    if i == 4:
+                        Tournament.update(self.tournament.serializer())
+                        break
                     if self.is_stop():
                         Tournament.update(self.tournament.serializer())
                         break
@@ -257,24 +249,22 @@ class TournamentControler:
     def is_stop(self):
         ask_tournament_stop = continue_tournament()
         ask_tournament_stop = ask_tournament_stop.lower()
-        while ask_tournament_stop != "yes" and ask_tournament_stop != "no":
+        while ask_tournament_stop != "oui" and ask_tournament_stop != "non":
             print("Erreur de saisie, votre réponse doit être oui ou non")
             ask_tournament_stop = continue_tournament()
             ask_tournament_stop = ask_tournament_stop.lower()
-        if ask_tournament_stop == "yes":
+        if ask_tournament_stop == "oui":
             return False
-        if ask_tournament_stop == "no":
+        if ask_tournament_stop == "non":
             return True
 
     def players_ordered_by_name(self):  # tri des joueurs par ordre alphabétique
         players = Tournament.get_all_players()
-        print(players)
-        players.sort(key=lambda x: x["last name"], reverse=True)
+        players.sort(key=lambda x: x["last name"])
         display_player(players)
 
     def players_ordered_by_elo(self):  # tri des joueurs par ordre de elo
         players = Tournament.get_all_players()
-        print(players)
         players.sort(key=lambda x: x["elo"], reverse=True)
         display_player(players)
         # appeler le display player
@@ -372,6 +362,7 @@ class TournamentControler:
                         rounds = Tournament.get_tournament_rounds(
                             names[tournament_number]
                         )
+                        print(len(rounds))
                         display_round(rounds)
                         break
                     else:
@@ -382,7 +373,6 @@ class TournamentControler:
                     choose_tournament = input(
                         "Erreur : Choisir le numéro du tournoi : "
                     )
-            display_round(rounds)
         elif answer == "7":
             names = Tournament.get_all_tournaments()
             for i in range(len(names)):
@@ -392,12 +382,12 @@ class TournamentControler:
                 try:
                     tournament_number = int(choose_tournament)
                     if tournament_number >= 0 and tournament_number < len(names):
-                        matchs_list = Tournament.get_tournament_matchs(
+                        matchs_list = Tournament.get_tournament_rounds(
                             names[tournament_number]
                         )
                         display_match(
                             matchs_list
-                        )  # TypeError: list indices must be integers or slices, not str
+                        )
                         break
                     else:
                         choose_tournament = input(

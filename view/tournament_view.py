@@ -75,16 +75,15 @@ def print_players_reports_menu():
     return None
 
 
-def display_match(match):
-    for index, match in enumerate(match):
-        print(
-            f" Joueur 1 : {match['player1']['first name']}, {match['player1']['last name']}"
-            f" Score joueur 1 : {match['player1']['score']},"
-            f" Joueur 2 : {match['player2']['first name']}, {match['player2']['last name']}"
-            f" Score joueur 2 : {match['player2']['score']}"
-        )
+def display_match(rounds):
+    for round in rounds:
+        print(f"Numero du round : {round['number']}")
+        print("-------- Matchs --------")
+        for index, match in enumerate(round["matchs"]):
+            print(f"{index + 1} : {match['player1']['first name']} VS {match['player2']['first name']}")
 
 
-def display_round(round):
-    for index, round in enumerate(round):
-        print(f"{index + 1} : Nombre de rounds : {round['number']}")
+def display_round(rounds):
+    for round in rounds:
+        print(f"Numero du round : {round['number']}")
+
