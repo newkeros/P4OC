@@ -1,4 +1,3 @@
-import datetime
 from utils import is_date_valid
 from model.tournament_model import Tournament
 
@@ -86,4 +85,3 @@ def display_match(rounds):
 def display_round(rounds):
     for round in rounds:
         print(f"Numero du round : {round['number']}")
-

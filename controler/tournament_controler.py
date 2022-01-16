@@ -29,8 +29,6 @@ from view.player_view import (
 from view.round_view import print_match_result, enter_score, print_final_round_score
 from utils import is_date_valid
 
-
-
 class TournamentControler:
     def __init__(self):
         self.tournament = None
@@ -64,7 +62,7 @@ class TournamentControler:
 
     def print_player(self):
         """print_player(self.tournament.players)"""
-        print_player(players)
+        print_player(players)""""""
 
     def check_tournament_name(self):
         tournament_name = get_tournament_name()
@@ -334,8 +332,7 @@ class TournamentControler:
                 try:
                     tournament_number = int(choose_tournament)
                     if tournament_number >= 0 and tournament_number < len(names):
-                        self.players_ordered_by_elo()  # ajouter le sort + display player    AttributeError: type object 'Tournament' has no attribute 'get_tournament_player_elo'
-                        break
+                        self.players_ordered_by_elo()
                     else:
                         choose_tournament = input(
                             "Erreur : Choisir le numéro du tournoi : "
