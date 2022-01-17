@@ -1,4 +1,3 @@
-from utils import is_date_valid
 from model.tournament_model import Tournament
 
 
@@ -20,7 +19,6 @@ def get_tournament_place():
 def get_tournament_date():
     tournament_date = input("Entrez la date du tournoi : ")
     return tournament_date
-    # proposer input de date à date ?
 
 
 def get_tournament_description():

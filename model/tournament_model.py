@@ -21,6 +21,7 @@ class Tournament:
         self.rounds.append(round)
 
     def serializer(self):
+        print(self.players)
         data = {
             "name": self.name,
             "time control": self.time_control,
@@ -84,7 +85,7 @@ class Tournament:
                     match["player1"]["score"],
                     match["player1"]["opponent list"],
                 )
-                player2 = (
+                player2 = Player(
                     match["player2"]["first name"],
                     match["player2"]["last name"],
                     match["player2"]["elo"],

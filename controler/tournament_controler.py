@@ -29,6 +29,7 @@ from view.player_view import (
 from view.round_view import print_match_result, enter_score, print_final_round_score
 from utils import is_date_valid
 
+
 class TournamentControler:
     def __init__(self):
         self.tournament = None
@@ -61,8 +62,8 @@ class TournamentControler:
         Tournament.save(self.tournament.serializer())"""
 
     def print_player(self):
-        """print_player(self.tournament.players)"""
-        print_player(players)""""""
+        print_player(self.tournament.players)
+        """print_player(players)"""
 
     def check_tournament_name(self):
         tournament_name = get_tournament_name()
@@ -193,20 +194,20 @@ class TournamentControler:
 
         if rounds_to_run == 4:
             self.run_first_round()
-            """if(self.is_stop()):
+            if(self.is_stop()):
                 Tournament.update(self.tournament.serializer(), tournament_name)
-                return"""
+                return
             for i in range(2, 5):
                 self.run_round(i)
-                """if (self.is_stop()):
+                if (self.is_stop()):
                     Tournament.update(self.tournament.serializer(), tournament_name)
-                    break"""
+                    break
         else:
             for i in range(rounds_to_run):
                 self.run_round(5 - rounds_to_run + i)
-                """if (self.is_stop()):
+                if (self.is_stop()):
                     Tournament.update(self.tournament.serializer(), tournament_name)
-                    break"""
+                    break
         Tournament.update(self.tournament.serializer(), tournament_name)
 
     def search_tournament(self):
@@ -222,20 +223,18 @@ class TournamentControler:
                 self.new_tournament()
                 self.run_first_round()
                 if self.is_stop():
-                    Tournament.update(
-                        self.tournament.serializer(), self.tournament.name
-                    )
+                    Tournament.save(self.tournament.serializer())
                     continue
                 for i in range(2, 5):
                     self.run_round(i)
                     if i == 4:
-                        Tournament.update(self.tournament.serializer())
+                        Tournament.save(self.tournament.serializer())
                         break
                     if self.is_stop():
-                        Tournament.update(self.tournament.serializer())
+                        Tournament.save(self.tournament.serializer())
                         break
             elif answer == "2":
-                self.resume_ongoing_tournament()  # affiche les tournois et demande de choisir
+                self.resume_ongoing_tournament()
             elif answer == "3":
                 print_reports_menu()
                 self.get_reports_menu()
@@ -261,11 +260,10 @@ class TournamentControler:
         players.sort(key=lambda x: x["last name"])
         display_player(players)
 
-    def players_ordered_by_elo(self):  # tri des joueurs par ordre de elo
+    def players_ordered_by_elo(self):
         players = Tournament.get_all_players()
         players.sort(key=lambda x: x["elo"], reverse=True)
         display_player(players)
-        # appeler le display player
 
     def tournament_players_ordered_by_name(self):
         Tournament.get_all_tournaments()  # récupère la liste de tous les tournois présents
@@ -273,7 +271,7 @@ class TournamentControler:
 
     def resume_ongoing_tournament(self):
         names = Tournament.get_ongoing_tournaments()
-        for i in range(len(names)):  # affichage
+        for i in range(len(names)):
             print(f"{i} - {names[i]}")
         choose_tournament = which_tournament_to_choose()  # quel tournoi reprendre
         while True:
@@ -308,7 +306,7 @@ class TournamentControler:
                     if tournament_number >= 0 and tournament_number < len(names):
                         players_list = Tournament.get_tournament_player(
                             names[tournament_number]
-                        )  # TypeError: get_tournament_player() missing 1 required positional argument: 'name'
+                        )
                         display_player(players_list)
 
                         break
@@ -322,7 +320,7 @@ class TournamentControler:
                     )
             print(
                 Tournament.get_tournament_player(names[tournament_number])
-            )  # changer par le display player ?
+            )
         elif answer == "4":
             names = Tournament.get_all_tournaments()
             for i in range(len(names)):
